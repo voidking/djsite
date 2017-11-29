@@ -3,6 +3,8 @@ from django.http import HttpResponse
 import json
 from django.forms.models import model_to_dict
 from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
+import datetime
 from . import models
 
 # Create your views here.
@@ -23,9 +25,10 @@ def list(request):
                   {'articles': articles, 'article': article})
 
 
+@csrf_exempt
 def add(request):
-    title = request.GET.get('title', 'defaultTitle')
-    content = request.GET.get('content', 'defaultContent')
+    title = request.POST.get('title', 'defaultTitle')
+    content = request.POST.get('content', 'defaultContent')
 
     article = models.Article.objects.create(title=title, content=content)
     article = model_to_dict(article)
@@ -37,7 +40,7 @@ def add(request):
         'ext': 'success',
         'article': article,
         'articles': dict_data}
-    return HttpResponse(json.dumps(result, ensure_ascii=False))
+    return HttpResponse(json.dumps(result, cls=DateEncoder, ensure_ascii=False))
 
 
 def edit(request):
@@ -59,3 +62,13 @@ def delete(request):
     models.Article.objects.get(pk=article_id).delete()
     result = {'code': 0, 'ext': 'success'}
     return HttpResponse(json.dumps(result, ensure_ascii=False))
+
+
+class DateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime("%Y-%m-%d")
+        else:
+            return json.JSONEncoder.default(self, obj)

@@ -14,12 +14,14 @@
         <thead>
             <th>标题</th>
             <th>内容</th>
+            <th>时间</th>
         </thead>
         <tbody>
             {% for article in articles %}
             <tr>
                 <td>{{article.title}}</td>
                 <td>{{article.content}}</td>
+                <td>{{article.pub_time|date:"Y-m-d H:i:s"}}</td>
             </tr>
             {% endfor %}
         </tbody>
