@@ -6,6 +6,7 @@ from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 import time
+from django.utils import timezone
 from . import models
 
 # Create your views here.
@@ -31,41 +32,41 @@ def add(request):
     title = request.POST.get('title', 'defaultTitle')
     content = request.POST.get('content', 'defaultContent')
 
-    # article = models.Article.objects.create(title=title, content=content)
-    # article = model_to_dict(article)
-    articles = models.Article.objects.all()
+    pub_time = utc2local(timezone.now())
+    LOCAL_FORMAT = "%Y-%m-%d %H:%M:%S"
+    pub_time = pub_time.strftime(LOCAL_FORMAT)
 
-    for item in articles:
-        # print(item.pub_time)
-        local_time = utc2local(item.pub_time)
-        # UTC_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
-        LOCAL_FORMAT = "%Y-%m-%d %H:%M:%S"
-        # print(local_time.strftime(LOCAL_FORMAT))
-        local_time_str = local_time.strftime(LOCAL_FORMAT)
-        item.pub_time = datetime.datetime.strptime(local_time_str, "%Y-%m-%d %H:%M:%S")
-
-    json_data = serializers.serialize("json", articles)
-    dict_data = json.loads(json_data)
+    article = models.Article.objects.create(title=title, content=content, pub_time=pub_time)
+    article = model_to_dict(article)
 
     result = {
         'code': 0,
         'ext': 'success',
-        # 'article': article,
-        'articles': dict_data}
-    return HttpResponse(json.dumps(result, cls=DateEncoder, ensure_ascii=False))
+        'article': article}
+    return HttpResponse(json.dumps(result, ensure_ascii=False))
 
 
+@csrf_exempt
 def edit(request):
-    article_id = request.GET.get('id', 0)
-    title = request.GET.get('title', 'defaultTitle')
-    content = request.GET.get('content', 'defaultContent')
+    article_id = request.POST.get('id', 0)
+    title = request.POST.get('title', 'defaultTitle')
+    content = request.POST.get('content', 'defaultContent')
+    pub_time = utc2local(timezone.now())
+    LOCAL_FORMAT = "%Y-%m-%d %H:%M:%S"
+    pub_time = pub_time.strftime(LOCAL_FORMAT)
 
     article = models.Article.objects.get(pk=article_id)
     article.title = title
     article.content = content
+    article.pub_time = pub_time
     article.save()
 
-    result = {'code': 0, 'ext': 'success', 'article_id': article.id}
+    article = model_to_dict(article)
+
+    result = {
+        'code': 0,
+        'ext': 'success',
+        'article': article}
     return HttpResponse(json.dumps(result, ensure_ascii=False))
 
 
@@ -81,7 +82,7 @@ class DateEncoder(json.JSONEncoder):
         if isinstance(obj, datetime.datetime):
             return obj.strftime('%Y-%m-%d %H:%M:%S')
         elif isinstance(obj, date):
-            return obj.strftime("%Y-%m-%d")
+            return obj.strftime('%Y-%m-%d')
         else:
             return json.JSONEncoder.default(self, obj)
 
