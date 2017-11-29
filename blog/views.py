@@ -5,6 +5,7 @@ from django.forms.models import model_to_dict
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+import time
 from . import models
 
 # Create your views here.
@@ -30,15 +31,26 @@ def add(request):
     title = request.POST.get('title', 'defaultTitle')
     content = request.POST.get('content', 'defaultContent')
 
-    article = models.Article.objects.create(title=title, content=content)
-    article = model_to_dict(article)
+    # article = models.Article.objects.create(title=title, content=content)
+    # article = model_to_dict(article)
     articles = models.Article.objects.all()
+
+    for item in articles:
+        # print(item.pub_time)
+        local_time = utc2local(item.pub_time)
+        # UTC_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+        LOCAL_FORMAT = "%Y-%m-%d %H:%M:%S"
+        # print(local_time.strftime(LOCAL_FORMAT))
+        local_time_str = local_time.strftime(LOCAL_FORMAT)
+        item.pub_time = datetime.datetime.strptime(local_time_str, "%Y-%m-%d %H:%M:%S")
+
     json_data = serializers.serialize("json", articles)
     dict_data = json.loads(json_data)
+
     result = {
         'code': 0,
         'ext': 'success',
-        'article': article,
+        # 'article': article,
         'articles': dict_data}
     return HttpResponse(json.dumps(result, cls=DateEncoder, ensure_ascii=False))
 
@@ -72,3 +84,14 @@ class DateEncoder(json.JSONEncoder):
             return obj.strftime("%Y-%m-%d")
         else:
             return json.JSONEncoder.default(self, obj)
+
+
+
+def utc2local(utc_st):
+    # UTC时间转本地时间（+8:00）
+    now_stamp = time.time()
+    local_time = datetime.datetime.fromtimestamp(now_stamp)
+    utc_time = datetime.datetime.utcfromtimestamp(now_stamp)
+    offset = local_time - utc_time
+    local_st = utc_st + offset
+    return local_st
