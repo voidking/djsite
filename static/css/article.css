@@ -1,0 +1,11 @@
+.edit{
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    height: 35px;
+    line-height: 35px;
+    text-decoration: none;
+    background: #0cf;
+    border-radius: 5px;
+    color: white;
+}

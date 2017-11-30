@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{%static 'css/article.css'%}">
+    <title>{{article.title}}</title>
+</head>
+<body>
+    <h2>{{article.title}}</h2>
+    <div>
+        <p>{{article.content}}</p>
+    </div>
+    <div>
+        <a class="edit" href="/blog/toedit/{{article.id}}">编辑</a>
+    </div>
+
+</body>
+</html>

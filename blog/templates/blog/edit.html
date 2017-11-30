@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改博客</title>
+</head>
+<body>
+    <form action="/blog/edit" method="post">
+        <p style="display: none;">
+            <input name="id" type="text" value="{{article.id}}">
+        </p>
+        <p>
+            <label for="title">标题</label>
+            <input id="title" name="title" type="text" value="{{article.title}}">
+        </p>
+
+        <p>
+            <label for="content">内容</label>
+            <textarea id="content" name="content" id="" cols="30" rows="10">{{article.content}}</textarea>
+        </p>
+        <p>
+            <input type="submit" value="确定">
+        </p>
+    </form>
+</body>
+</html>

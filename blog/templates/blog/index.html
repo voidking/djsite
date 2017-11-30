@@ -2,10 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{%static 'css/index.css'%}">
+    <title>首页</title>
 </head>
 <body>
-    <h2>{{title}}</h2>
-    <p>first template!</p>
+    <h2>博客列表</h2>
+    <div class="menu">
+        <input class="search-input" type="text"> 
+        <span class="search">搜索</span> 
+        <a class="add" href="/blog/toadd">添加</a>
+    </div>
+    <table>
+        <thead>
+            <th>博客标题</th>
+            <th>发布时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr data-id="{{article.id}}">
+                <td><a href="/blog/{{article.id}}">{{article.title}}</a></td>
+                <td>{{article.pub_time}}</td>
+                <td>
+                    <span class="del">删除</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<script type="text/template" id="tr_template">
+    <% for(var i = 0 ; i < articles.length ; i ++){ %>
+    <% var article = articles[i]; %>
+    <tr data-id="<%=article.pk%>">
+        <td><a href="/blog/<%=article.pk%>"><%=article.fields.title%></a></td>
+        <td><%=article.fields.pub_time%></td>
+        <td>
+            <span class="del">删除</span>
+        </td>
+    </tr>
+    <% } %>
+</script>
+<script src="{% static 'lib/jquery/jquery.min.js'%}"></script>
+<script src="{% static 'lib/layer/layer.js'%}"></script>
+<script src="{% static 'lib/art-template/dist/template-native.js'%}"></script>
+<script src="{% static 'js/index.js'%}"></script>
 </body>
 </html>

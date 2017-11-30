@@ -1,0 +1,74 @@
+h2{
+    text-align: center;
+}
+
+.menu{
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.menu .search-input{
+    width: 300px;
+    height: 35px;
+    line-height: 35px;
+    border-radius: 5px;
+    border: 1px solid #0cf;
+    font-size: 17px;
+}
+
+.menu .search{
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    height: 35px;
+    line-height: 35px;
+    text-decoration: none;
+    background: #0cf;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+.menu .add{
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    height: 35px;
+    line-height: 35px;
+    text-decoration: none;
+    background: #0cf;
+    border-radius: 5px;
+    color: white;
+}
+
+table{
+    width: 100%;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-collapse: collapse;
+}
+thead{
+    border-bottom: 1px solid #ccc;
+}
+tr{
+    height: 30px;
+    line-height: 30px;
+}
+tr:not(first-child){
+    border-top: 1px solid #ccc;
+}
+td:first-child{
+    width: 40%;
+    border-right: 1px solid #ccc;
+}
+td:nth-child(2){
+    border-right: 1px solid #ccc;
+    width: 40%;
+}
+td:last-child{
+    width: 20%;
+}
+
+.del{
+    cursor: pointer;
+    color: #0cf;
+}

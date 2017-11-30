@@ -7,13 +7,15 @@ from django.views.decorators.csrf import csrf_exempt
 import datetime
 import time
 from django.utils import timezone
+from django.db.models import Q
 from . import models
 
 # Create your views here.
 
 
 def index(request):
-    return render(request, 'blog/index.html', {'title': 'DTL'})
+    articles = models.Article.objects.all()
+    return render(request, 'blog/index.html', {'articles': articles})
 
 
 def hello(request):
@@ -36,14 +38,13 @@ def add(request):
     LOCAL_FORMAT = "%Y-%m-%d %H:%M:%S"
     pub_time = pub_time.strftime(LOCAL_FORMAT)
 
-    article = models.Article.objects.create(title=title, content=content, pub_time=pub_time)
-    article = model_to_dict(article)
+    models.Article.objects.create(
+        title=title,
+        content=content,
+        pub_time=pub_time)
 
-    result = {
-        'code': 0,
-        'ext': 'success',
-        'article': article}
-    return HttpResponse(json.dumps(result, ensure_ascii=False))
+    articles = models.Article.objects.all()
+    return render(request, 'blog/index.html', {'articles': articles})
 
 
 @csrf_exempt
@@ -61,17 +62,13 @@ def edit(request):
     article.pub_time = pub_time
     article.save()
 
-    article = model_to_dict(article)
-
-    result = {
-        'code': 0,
-        'ext': 'success',
-        'article': article}
-    return HttpResponse(json.dumps(result, ensure_ascii=False))
+    articles = models.Article.objects.all()
+    return render(request, 'blog/index.html', {'articles': articles})
 
 
+@csrf_exempt
 def delete(request):
-    article_id = request.GET.get('id', 0)
+    article_id = request.POST.get('id', 0)
     models.Article.objects.get(pk=article_id).delete()
     result = {'code': 0, 'ext': 'success'}
     return HttpResponse(json.dumps(result, ensure_ascii=False))
@@ -86,6 +83,33 @@ class DateEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, obj)
 
+
+def detail(request, article_id):
+    article = models.Article.objects.get(pk=article_id)
+    return render(request, 'blog/article.html',
+                  {'article': article})
+
+
+def toadd(request):
+    return render(request, 'blog/add.html')
+
+
+def toedit(request, article_id):
+    article = models.Article.objects.get(pk=article_id)
+    return render(request, 'blog/edit.html', {'article': article})
+
+
+@csrf_exempt
+def search(request):
+    key = request.POST.get('key')
+    articles = models.Article.objects.filter(Q(title__contains=key) | Q(content__contains=key))
+    json_data = serializers.serialize("json", articles)
+    dict_data = json.loads(json_data)
+    result = {
+        'code': 0,
+        'ext': 'success',
+        'articles': dict_data}
+    return HttpResponse(json.dumps(result, ensure_ascii=False))
 
 
 def utc2local(utc_st):
