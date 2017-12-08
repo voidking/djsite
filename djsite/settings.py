@@ -25,7 +25,7 @@ SECRET_KEY = 't%z*h8=8hx)9=h*42ru+i4%^5wp5)9t5ql#%llttq866yc=#8o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -88,7 +88,7 @@ DATABASES = {
         'PORT': '3306',
         'NAME': 'djsite',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'voidking',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
