@@ -22,4 +22,4 @@ Django入门实例，一个简单博客系统
 [Django部署到线上（修改版）](http://www.voidking.com/2018/01/22/deve-django-deploy-advance/)
 
 # 效果演示
-![](http://7oxjrx.com1.z0.glb.clouddn.com//imgs/django-blog-1/result.gif?imageView2/0/w/700)
+![](http://cdn.voidking.com//imgs/django-blog-1/result.gif?imageView2/0/w/700)
